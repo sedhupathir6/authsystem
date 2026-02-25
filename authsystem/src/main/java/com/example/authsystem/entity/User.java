@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.example.authsystem.entity;
 
 import jakarta.persistence.*;
 
