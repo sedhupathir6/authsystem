@@ -8,22 +8,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login").permitAll()
-                        .requestMatchers("/dashboard").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll());
+                http
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/").authenticated()
+                                                .anyRequest().permitAll())
+                                .formLogin(form -> form
+                                                .defaultSuccessUrl("/home", true)
+                                                .permitAll())
+                                .logout(logout -> logout.permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 }
