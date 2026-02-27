@@ -23,13 +23,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(User user) {
+    public String registerUser(@RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String password) {
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
+        User user = new User(
+                name,
+                email,
+                passwordEncoder.encode(password),
+                "ROLE_USER" // default role
+        );
 
         userRepository.save(user);
-
         return "redirect:/login";
     }
 

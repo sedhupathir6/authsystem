@@ -9,16 +9,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
                 http
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/").authenticated()
-                                                .anyRequest().permitAll())
+                                                .requestMatchers("/register", "/login").permitAll()
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/user/**").hasRole("USER")
+                                                .anyRequest().authenticated())
                                 .formLogin(form -> form
-                                                .defaultSuccessUrl("/home", true)
+                                                .loginPage("/login")
+                                                .defaultSuccessUrl("/dashboard", true)
                                                 .permitAll())
-                                .logout(logout -> logout.permitAll());
+                                .logout(logout -> logout
+                                                .logoutSuccessUrl("/login")
+                                                .permitAll());
 
                 return http.build();
         }
