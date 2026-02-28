@@ -2,8 +2,6 @@ package com.example.authsystem.controller;
 
 import com.example.authsystem.entity.User;
 import com.example.authsystem.repository.UserRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +9,22 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public AuthController(UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
 
     @GetMapping("/register")
-    public String registerPage(User user) {
+    public String registerPage() {
         return "register";
     }
 
@@ -27,24 +33,17 @@ public class AuthController {
             @RequestParam String email,
             @RequestParam String password) {
 
+        if (userRepository.findByEmail(email).isPresent()) {
+            return "redirect:/register?error";
+        }
+
         User user = new User(
                 name,
                 email,
                 passwordEncoder.encode(password),
-                "ROLE_USER" // default role
-        );
+                "ROLE_USER");
 
         userRepository.save(user);
         return "redirect:/login";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
     }
 }

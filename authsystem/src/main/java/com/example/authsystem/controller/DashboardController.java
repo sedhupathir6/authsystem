@@ -10,11 +10,9 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication) {
 
-        if (authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "admin-dashboard";
-        }
-
-        return "user-dashboard";
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))
+                        ? "admin-dashboard"
+                        : "user-dashboard";
     }
 }
